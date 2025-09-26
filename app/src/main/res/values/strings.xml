@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">MultiCronómetro</string>
+    <string name="start">Iniciar</string>
+    <string name="stop">Parar</string>
+    <string name="lap">Vuelta</string>
+    <string name="reset">Reset</string>
+    <string name="add_stopwatch">Añadir Cronómetro</string>
+    <string name="remove">Eliminar</string>
+    <string name="stopwatch">Cronómetro</string>
+    <string name="lap_time">Tiempo Vuelta</string>
+    <string name="total_time">Tiempo Total</string>
+    <string name="lap_number">Vuelta %d</string>
+</resources>

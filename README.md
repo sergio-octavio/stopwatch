@@ -16,7 +16,8 @@
 
 The app starts with a clean interface where you can add multiple stopwatches using the + button.
 
-![Home screen](app/src/main/assets/home.png)
+![Home screen](https://github.com/user-attachments/assets/2443bd14-57ac-474d-9c3d-43ba98ac7881)
+
 
 ### Multiple Stopwatches in Action
 
@@ -25,7 +26,7 @@ Example with:
 - Another showing lap history.
 - Another not started.
 
-![Stopwatches in action](app/src/main/assets/multiple_stopwatches.png)
+![Stopwatches in action](https://github.com/user-attachments/assets/5661b8bf-aff5-4738-b34d-8ab28252cb9d)
 
 ## 🎥 Demo Video
 

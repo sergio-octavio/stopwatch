@@ -28,12 +28,6 @@ Example with:
 
 ![Stopwatches in action](https://github.com/user-attachments/assets/5661b8bf-aff5-4738-b34d-8ab28252cb9d)
 
-## 🎥 Demo Video
-
-See how it works in this video:
-
-
-(Click on the thumbnail to watch the video on YouTube)
 
 ## 🚀 Features
 

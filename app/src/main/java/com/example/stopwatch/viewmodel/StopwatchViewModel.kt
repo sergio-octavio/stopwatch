@@ -42,6 +42,17 @@ class StopwatchViewModel : ViewModel() {
     val stopwatches: State<List<Stopwatch>> = _stopwatches
 
     /**
+     * Private mutable state holding the ID of the currently active stopwatch.
+     * This determines which stopwatch responds to volume button controls.
+     */
+    private val _activeStopwatchId = mutableStateOf<String?>(null)
+
+    /**
+     * Public read-only state exposing the active stopwatch ID to the UI.
+     */
+    val activeStopwatchId: State<String?> = _activeStopwatchId
+
+    /**
      * Map storing active coroutine jobs for running timers.
      * Key: Stopwatch ID, Value: Coroutine Job handling the timer updates.
      */
@@ -62,6 +73,11 @@ class StopwatchViewModel : ViewModel() {
     fun addStopwatch() {
         val newStopwatch = Stopwatch(name = "Cronómetro ${_stopwatches.value.size + 1}")
         _stopwatches.value = _stopwatches.value + newStopwatch
+
+        // Set as active if no active stopwatch exists
+        if (_activeStopwatchId.value == null) {
+            _activeStopwatchId.value = newStopwatch.id
+        }
     }
 
     /**
@@ -83,6 +99,11 @@ class StopwatchViewModel : ViewModel() {
         timerJobs[id]?.cancel()
         timerJobs.remove(id)
         _stopwatches.value = _stopwatches.value.filter { it.id != id }
+
+        // If removing the active stopwatch, set new active or clear
+        if (_activeStopwatchId.value == id) {
+            _activeStopwatchId.value = _stopwatches.value.firstOrNull()?.id
+        }
     }
 
     /**
@@ -204,6 +225,27 @@ class StopwatchViewModel : ViewModel() {
         val stopwatch = _stopwatches.value.find { it.id == id } ?: return
         val updatedStopwatch = stopwatch.copy(name = newName.trim().ifEmpty { "Cronómetro" })
         updateStopwatch(updatedStopwatch)
+    }
+
+    /**
+     * Sets the active stopwatch for volume button control.
+     *
+     * @param id The unique identifier of the stopwatch to set as active
+     */
+    fun setActiveStopwatch(id: String) {
+        if (_stopwatches.value.any { it.id == id }) {
+            _activeStopwatchId.value = id
+        }
+    }
+
+    /**
+     * Gets the currently active stopwatch for volume button control.
+     *
+     * @return The active stopwatch or null if none is active
+     */
+    fun getActiveStopwatch(): Stopwatch? {
+        val activeId = _activeStopwatchId.value ?: return null
+        return _stopwatches.value.find { it.id == activeId }
     }
 
     private fun startTimer(id: String) {

@@ -29,17 +29,28 @@ import com.example.stopwatch.model.Stopwatch
 @Composable
 fun StopwatchItem(
     stopwatch: Stopwatch,
+    isActive: Boolean,
     onStart: () -> Unit,
     onStop: () -> Unit,
     onLap: () -> Unit,
     onReset: () -> Unit,
     onRemove: () -> Unit,
     onNameChange: (String) -> Unit,
+    onSetActive: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onSetActive() },
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = if (isActive) {
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            )
+        } else {
+            CardDefaults.cardColors()
+        }
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -182,14 +193,6 @@ fun StopwatchItem(
 
             if (stopwatch.laps.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = "Historial de Vueltas",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
 
                 LazyColumn(
                     modifier = Modifier

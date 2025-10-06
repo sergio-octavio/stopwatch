@@ -24,6 +24,7 @@ fun StopwatchApp(
     modifier: Modifier = Modifier
 ) {
     val stopwatches by viewModel.stopwatches
+    val activeStopwatchId by viewModel.activeStopwatchId
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -71,12 +72,14 @@ fun StopwatchApp(
                 items(stopwatches, key = { it.id }) { stopwatch ->
                     StopwatchItem(
                         stopwatch = stopwatch,
+                        isActive = stopwatch.id == activeStopwatchId,
                         onStart = { viewModel.startStopwatch(stopwatch.id) },
                         onStop = { viewModel.stopStopwatch(stopwatch.id) },
                         onLap = { viewModel.recordLap(stopwatch.id) },
                         onReset = { viewModel.resetStopwatch(stopwatch.id) },
                         onRemove = { viewModel.removeStopwatch(stopwatch.id) },
-                        onNameChange = { newName -> viewModel.updateStopwatchName(stopwatch.id, newName) }
+                        onNameChange = { newName -> viewModel.updateStopwatchName(stopwatch.id, newName) },
+                        onSetActive = { viewModel.setActiveStopwatch(stopwatch.id) }
                     )
                 }
             }

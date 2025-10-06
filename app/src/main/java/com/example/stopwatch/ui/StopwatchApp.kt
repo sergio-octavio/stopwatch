@@ -5,12 +5,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,81 +33,61 @@ fun StopwatchApp(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopAppBar(
-            title = {
-                Text(
-                    text = stringResource(R.string.app_name),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Control buttons for active stopwatch
-        if (stopwatches.isNotEmpty()) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(bottom = 16.dp)
-            ) {
+            title = { /* Title removed as requested */ },
+            actions = {
                 val activeStopwatch = stopwatches.find { it.id == activeStopwatchId }
 
-                FloatingActionButton(
-                    onClick = {
-                        activeStopwatch?.let { stopwatch ->
-                            if (stopwatch.isRunning) {
-                                viewModel.stopStopwatch(stopwatch.id)
+                // Conditionally display Start/Stop and Lap buttons
+                if (activeStopwatch != null) {
+                    IconButton(
+                        onClick = {
+                            if (activeStopwatch.isRunning) {
+                                viewModel.stopStopwatch(activeStopwatch.id)
                             } else {
-                                viewModel.startStopwatch(stopwatch.id)
+                                viewModel.startStopwatch(activeStopwatch.id)
                             }
                         }
-                    },
-                    containerColor = MaterialTheme.colorScheme.secondary
-                ) {
-                    if (activeStopwatch?.isRunning == true) {
+                    ) {
+                        if (activeStopwatch.isRunning) {
+                            Icon(
+                                imageVector = Icons.Default.Pause,
+                                contentDescription = "Pausar"
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = "Iniciar"
+                            )
+                        }
+                    }
+
+                    IconButton(
+                        onClick = {
+                            if (activeStopwatch.isRunning) {
+                                viewModel.recordLap(activeStopwatch.id)
+                            }
+                        },
+                        enabled = activeStopwatch.isRunning
+                    ) {
                         Text(
-                            text = "||",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = "Iniciar"
+                            text = "L",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
                         )
                     }
                 }
 
-                FloatingActionButton(
-                    onClick = {
-                        activeStopwatch?.let { stopwatch ->
-                            if (stopwatch.isRunning) {
-                                viewModel.recordLap(stopwatch.id)
-                            }
-                        }
-                    },
-                    containerColor = MaterialTheme.colorScheme.tertiary,
-                    modifier = Modifier.alpha(if (activeStopwatch?.isRunning == true) 1f else 0.5f)
-                ) {
-                    Text(
-                        text = "L",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
+                // Add Stopwatch button
+                IconButton(onClick = { viewModel.addStopwatch() }) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.add_stopwatch)
                     )
                 }
             }
-        }
+        )
 
-        FloatingActionButton(
-            onClick = { viewModel.addStopwatch() },
-            modifier = Modifier.padding(bottom = 16.dp),
-            containerColor = MaterialTheme.colorScheme.primary
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = stringResource(R.string.add_stopwatch)
-            )
-        }
+        Spacer(modifier = Modifier.height(16.dp))
 
         if (stopwatches.isEmpty()) {
             Box(

@@ -1,6 +1,7 @@
 package com.example.stopwatch
 
 import android.os.Bundle
+import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -31,6 +32,41 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
+        }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_VOLUME_UP -> {
+                handleVolumeButtonPress(true)
+                true
+            }
+            KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                handleVolumeButtonPress(false)
+                true
+            }
+            else -> super.onKeyDown(keyCode, event)
+        }
+    }
+
+    private fun handleVolumeButtonPress(isVolumeUp: Boolean) {
+        val currentStopwatches = viewModel.stopwatches.value
+
+        if (currentStopwatches.isEmpty()) {
+            viewModel.addStopwatch()
+            return
+        }
+
+        val activeStopwatch = viewModel.getActiveStopwatch() ?: currentStopwatches.first()
+
+        if (activeStopwatch.isRunning) {
+            if (isVolumeUp) {
+                viewModel.recordLap(activeStopwatch.id)
+            } else {
+                viewModel.stopStopwatch(activeStopwatch.id)
+            }
+        } else {
+            viewModel.startStopwatch(activeStopwatch.id)
         }
     }
 }

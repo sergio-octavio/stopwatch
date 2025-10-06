@@ -5,10 +5,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -41,6 +43,60 @@ fun StopwatchApp(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        // Control buttons for active stopwatch
+        if (stopwatches.isNotEmpty()) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.padding(bottom = 16.dp)
+            ) {
+                val activeStopwatch = stopwatches.find { it.id == activeStopwatchId }
+
+                FloatingActionButton(
+                    onClick = {
+                        activeStopwatch?.let { stopwatch ->
+                            if (stopwatch.isRunning) {
+                                viewModel.stopStopwatch(stopwatch.id)
+                            } else {
+                                viewModel.startStopwatch(stopwatch.id)
+                            }
+                        }
+                    },
+                    containerColor = MaterialTheme.colorScheme.secondary
+                ) {
+                    if (activeStopwatch?.isRunning == true) {
+                        Text(
+                            text = "||",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = "Iniciar"
+                        )
+                    }
+                }
+
+                FloatingActionButton(
+                    onClick = {
+                        activeStopwatch?.let { stopwatch ->
+                            if (stopwatch.isRunning) {
+                                viewModel.recordLap(stopwatch.id)
+                            }
+                        }
+                    },
+                    containerColor = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.alpha(if (activeStopwatch?.isRunning == true) 1f else 0.5f)
+                ) {
+                    Text(
+                        text = "L",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
 
         FloatingActionButton(
             onClick = { viewModel.addStopwatch() },

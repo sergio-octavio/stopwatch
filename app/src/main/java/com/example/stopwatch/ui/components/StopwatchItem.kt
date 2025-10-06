@@ -1,13 +1,16 @@
 package com.example.stopwatch.ui.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -42,11 +45,22 @@ fun StopwatchItem(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onSetActive() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            .clickable { onSetActive() }
+            .then(
+                if (isActive) {
+                    Modifier.border(
+                        width = 3.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                } else {
+                    Modifier
+                }
+            ),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isActive) 8.dp else 4.dp),
         colors = if (isActive) {
             CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
             )
         } else {
             CardDefaults.cardColors()
@@ -123,6 +137,16 @@ fun StopwatchItem(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
+                if (isActive) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = "Cronómetro activo",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+
                 IconButton(onClick = onRemove) {
                     Icon(
                         imageVector = Icons.Default.Delete,
@@ -144,6 +168,18 @@ fun StopwatchItem(
                 else
                     MaterialTheme.colorScheme.onSurface
             )
+
+            if (stopwatch.isRunning || stopwatch.laps.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Vuelta: ${stopwatch.formattedCurrentLapTime}",
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 

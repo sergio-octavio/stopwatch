@@ -37,6 +37,19 @@ data class Stopwatch(
     val formattedTime: String
         get() = formatTime(currentTime)
 
+    /**
+     * Returns the current lap time (time since last lap or since start if no laps).
+     * Format: MM:SS.CC (minutes:seconds.centiseconds)
+     *
+     * @return Formatted lap time string (e.g., "00:15.23")
+     */
+    val formattedCurrentLapTime: String
+        get() {
+            val lastLapTime = if (laps.isEmpty()) 0L else laps.last().totalTime
+            val currentLapTime = currentTime - lastLapTime
+            return formatTime(currentLapTime)
+        }
+
     companion object {
         /**
          * Formats a time value in milliseconds to a human-readable string format.
